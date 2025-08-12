@@ -254,10 +254,11 @@ function App() {
         
         accumulatedResponse += decoder.decode(value, { stream: true });
 
-        // Use functional update to avoid capturing accumulatedResponse in the loop
+        // Create a local copy to avoid the loop variable issue
+        const currentText = accumulatedResponse;
         setMessages(prev => prev.map(m =>
           m.id === loadingMessageId
-            ? { ...m, text: accumulatedResponse, isLoading: true }
+            ? { ...m, text: currentText, isLoading: true }
             : m
         ));
       }
