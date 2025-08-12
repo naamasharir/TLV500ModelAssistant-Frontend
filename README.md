@@ -1,70 +1,180 @@
-# Getting Started with Create React App
+# TLV500 Frontend 🌐
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+פרונטאנד עבור TLV500 AI Assistant - ממשק משתמש מתקדם לעוזר AI פיננסי.
 
-## Available Scripts
+## 📋 תיאור הפרויקט
 
-In the project directory, you can run:
+פרויקט React מודרני המספק ממשק משתמש אינטואיטיבי לעוזר AI הפיננסי. הפרויקט כולל אינטגרציה מלאה עם Google Sheets, ממשק צ'אט אינטראקטיבי, ותמיכה בהעלאת קבצים.
 
-### `npm start`
+## ✨ תכונות עיקריות
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- 🎨 **ממשק משתמש מודרני** - בנוי עם React ו-Material-UI
+- 💬 **צ'אט אינטראקטיבי** - שיחה טבעית עם AI
+- 📊 **אינטגרציה עם Google Sheets** - קריאה ועריכה בזמן אמת
+- 📄 **העלאת קבצים** - תמיכה ב-PDF, Excel, CSV
+- 🔐 **אימות Google OAuth** - התחברות מאובטחת
+- 🌍 **תמיכה בעברית** - ממשק מותאם לעברית
+- 📱 **עיצוב רספונסיבי** - מותאם לכל המכשירים
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠️ טכנולוגיות
 
-### `npm test`
+- **React 19.1.0** - ספריית UI מתקדמת
+- **Material-UI (MUI) 7.2.0** - רכיבי UI מעוצבים
+- **Google APIs** - אינטגרציה עם Google Sheets ו-OAuth
+- **React Testing Library** - בדיקות אוטומטיות
+- **Create React App** - הגדרת פרויקט מהירה
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🚀 התקנה והפעלה
 
-### `npm run build`
+### דרישות מוקדמות
+- Node.js (גרסה 16 או חדשה יותר)
+- npm או yarn
+- חשבון Google Cloud עם API keys
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 1. שיבוט הפרויקט
+```bash
+git clone <repository-url>
+cd TLV500-Frontend
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 2. התקנת תלותות
+```bash
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 3. הגדרת משתני סביבה
+העתק את קובץ `.env.example` ל-`.env`:
+```bash
+cp .env.example .env
+```
 
-### `npm run eject`
+ערוך את קובץ `.env` והכנס את המפתחות שלך:
+```env
+REACT_APP_GOOGLE_API_KEY=your_actual_google_api_key
+REACT_APP_GOOGLE_CLIENT_ID=your_actual_google_client_id
+REACT_APP_BACKEND_URL=http://localhost:5001
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 4. הפעלת שרת הפיתוח
+```bash
+npm start
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+האפליקציה תיפתח ב: `http://localhost:3000`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🏗️ בניית הפרויקט לפרודקשן
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm run build
+```
 
-## Learn More
+הקבצים יישמרו בתיקיית `build/` ומוכנים לפרסום.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🧪 הרצת בדיקות
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+# בדיקות יחידה
+npm test
 
-### Code Splitting
+# בדיקות עם כיסוי
+npm test -- --coverage
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 📁 מבנה הפרויקט
 
-### Analyzing the Bundle Size
+```
+src/
+├── components/          # רכיבי React
+│   ├── ChatHistory.js  # ממשק צ'אט
+│   └── ...
+├── App.js              # רכיב ראשי
+├── App.css             # עיצוב ראשי
+├── index.js            # נקודת כניסה
+└── index.css           # עיצוב כללי
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+public/
+├── index.html          # תבנית HTML
+├── manifest.json       # הגדרות PWA
+└── ...
+```
 
-### Making a Progressive Web App
+## ⚙️ הגדרות נוספות
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### הגדרת Google APIs
+1. עבור ל-[Google Cloud Console](https://console.cloud.google.com/)
+2. צור פרויקט חדש או בחר פרויקט קיים
+3. הפעל את השירותים הבאים:
+   - Google Sheets API
+   - Google Drive API
+   - Google OAuth2 API
+4. צור credentials ועדכן את קובץ `.env`
 
-### Advanced Configuration
+### הגדרת CORS
+ודא שהבקאנד מוגדר לאפשר בקשות מ-`http://localhost:3000`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 🔧 סקריפטים זמינים
 
-### Deployment
+- `npm start` - הפעלת שרת פיתוח
+- `npm run build` - בניה לפרודקשן
+- `npm test` - הרצת בדיקות
+- `npm run eject` - הוצאת הגדרות Create React App (לא הפיך!)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 🌐 אינטגרציה עם הבקאנד
 
-### `npm run build` fails to minify
+הפרונטאנד מתקשר עם הבקאנד דרך API calls ל:
+- `GET /api/health` - בדיקת תקינות
+- `POST /api/chat` - שיחה עם AI
+- `POST /api/upload_file` - העלאת קבצים
+- `POST /api/select_sheet` - בחירת גיליון
+- ועוד...
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+ודא שהבקאנד רץ על הכתובת המוגדרת ב-`REACT_APP_BACKEND_URL`.
+
+## 🐛 פתרון בעיות נפוצות
+
+### 1. שגיאות CORS
+```
+Access to fetch at 'http://localhost:5001' blocked by CORS policy
+```
+**פתרון**: ודא שהבקאנד מוגדר נכון לCORS
+
+### 2. שגיאות Google OAuth
+```
+Invalid client: no registered origin
+```
+**פתרון**: הוסף את `http://localhost:3000` ל-authorized origins ב-Google Console
+
+### 3. שגיאות משתני סביבה
+```
+Process env REACT_APP_GOOGLE_CLIENT_ID is undefined
+```
+**פתרון**: ודא שקובץ `.env` קיים ומכיל את כל המפתחות הנדרשים
+
+## 📱 תמיכה במכשירים
+
+- **דסקטופ**: Chrome, Firefox, Safari, Edge
+- **מובייל**: iOS Safari, Chrome Mobile
+- **טאבלט**: תמיכה מלאה
+
+## 🔒 אבטחה
+
+- כל הטוקנים נשמרים ב-localStorage בצורה מאובטחת
+- HTTPS נדרש לפרודקשן
+- אימות Google OAuth מאובטח
+- ולידציה של כל הקלטות המשתמש
+
+## 🤝 תרומה לפרויקט
+
+1. עשה Fork לפרויקט
+2. צור branch חדש (`git checkout -b feature/amazing-feature`)
+3. עשה commit לשינויים (`git commit -m 'Add amazing feature'`)
+4. דחף ל-branch (`git push origin feature/amazing-feature`)
+5. פתח Pull Request
+
+## 📝 רישיון
+
+פרויקט זה מיועד לשימוש פנימי בלבד.
+
+---
+
+**TLV500 Frontend** - הממשק החכם לעוזר הפיננסי שלך! 🚀
