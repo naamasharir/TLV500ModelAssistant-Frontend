@@ -16,7 +16,6 @@ import {
   Chip,
   Menu,
   MenuItem,
-  Divider,
   CircularProgress,
   Tooltip
 } from '@mui/material';
@@ -27,8 +26,7 @@ import {
   Edit,
   Delete,
   History,
-  SmartToy,
-  Person
+  SmartToy
 } from '@mui/icons-material';
 
 // API URL configuration

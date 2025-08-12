@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Box,
   Drawer,
@@ -218,8 +218,9 @@ function App() {
     }]);
 
     try {
-      const sheetData = (isSheetLoaded && isSheetSelected) ? 
-        await getSheetData(extractSpreadsheetId(googleSheetsUrl), selectedSheetName) : null;
+      // Remove unused variable 'sheetData' - it was assigned but never used
+      // const sheetData = (isSheetLoaded && isSheetSelected) ?
+      //   await getSheetData(extractSpreadsheetId(googleSheetsUrl), selectedSheetName) : null;
       const spreadsheetId = isSheetLoaded ? extractSpreadsheetId(googleSheetsUrl) : null;
 
       const payload = {
@@ -253,12 +254,12 @@ function App() {
         
         accumulatedResponse += decoder.decode(value, { stream: true });
 
-        setMessages(prev => prev.map(m => {
-          if (m.id === loadingMessageId) {
-            return { ...m, text: accumulatedResponse, isLoading: true };
-          }
-          return m;
-        }));
+        // Use functional update to avoid capturing accumulatedResponse in the loop
+        setMessages(prev => prev.map(m =>
+          m.id === loadingMessageId
+            ? { ...m, text: accumulatedResponse, isLoading: true }
+            : m
+        ));
       }
 
       // Final processing
@@ -278,7 +279,9 @@ function App() {
         setTimeout(() => {
           const iframe = document.querySelector('iframe[title="Google Sheets"]');
           if (iframe) {
-            iframe.src = iframe.src;
+            // Force iframe reload by setting src to itself
+            const currentSrc = iframe.src;
+            iframe.src = currentSrc;
           }
         }, 1000);
       }
@@ -445,6 +448,58 @@ function App() {
     };
   }, [isIframeHovered]);
 
+  // 🔄 Undo/Redo Functions
+  const checkUndoRedoStatus = useCallback(async () => {
+    if (!currentSessionId) return;
+    
+    try {
+      const response = await fetch(`${API_URL}/api/action/status/${currentSessionId}`, {
+        method: 'GET',
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setCanUndo(data.canUndo);
+        setCanRedo(data.canRedo);
+      }
+    } catch (error) {
+      console.error('Error checking undo/redo status:', error);
+    }
+  }, [currentSessionId]);
+
+  // 🟢 Check for green cells
+  const checkForGreenCells = useCallback(async () => {
+    if (!googleSheetsUrl || !selectedSheetName || !currentSessionId || isCheckingGreenCells) return;
+    
+    setIsCheckingGreenCells(true);
+    try {
+      // Simple check - if there are undo-able actions of type AI_ACTION that were recently executed
+      // we assume there might be green cells
+      const response = await fetch(`${API_URL}/api/action/status/${currentSessionId}`, {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const status = await response.json();
+        // For now, assume green cells exist if there are recent AI actions to undo
+        const hasChanges = status.canUndo;
+        // Debug: checkForGreenCells result
+        console.log('🟢 Full status from backend:', status);
+        console.log('🟢 hasGreenCells:', hasChanges, 'changesCount:', status.changesCount);
+        setHasGreenCells(hasChanges);
+        
+        // עדכון ספירת השינויים מהבקענד
+        setChangesCount(status.changesCount || 0);
+      }
+    } catch (error) {
+      console.error('Error checking for green cells:', error);
+      setHasGreenCells(false);
+      setChangesCount(0);
+    } finally {
+      setIsCheckingGreenCells(false);
+    }
+  }, [googleSheetsUrl, selectedSheetName, currentSessionId, isCheckingGreenCells]);
+
   // בדיקת סטטוס אוטומטית כשגליון נבחר
   useEffect(() => {
     if (isSheetSelected && selectedSheetName && currentSessionId) {
@@ -457,7 +512,7 @@ function App() {
       
       return () => clearTimeout(timer);
     }
-  }, [selectedSheetName, isSheetSelected, currentSessionId]);
+  }, [selectedSheetName, isSheetSelected, currentSessionId, checkUndoRedoStatus, checkForGreenCells]);
 
   const fetchUserInfo = async () => {
     try {
@@ -1249,57 +1304,6 @@ function App() {
     }
   };
 
-  // 🔄 Undo/Redo Functions
-  const checkUndoRedoStatus = async () => {
-    if (!currentSessionId) return;
-    
-    try {
-      const response = await fetch(`${API_URL}/api/action/status/${currentSessionId}`, {
-        method: 'GET',
-        credentials: 'include'
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setCanUndo(data.canUndo);
-        setCanRedo(data.canRedo);
-      }
-    } catch (error) {
-      console.error('Error checking undo/redo status:', error);
-    }
-  };
-
-  // 🟢 Check for green cells
-  const checkForGreenCells = async () => {
-    if (!googleSheetsUrl || !selectedSheetName || !currentSessionId || isCheckingGreenCells) return;
-    
-    setIsCheckingGreenCells(true);
-    try {
-      // Simple check - if there are undo-able actions of type AI_ACTION that were recently executed
-      // we assume there might be green cells
-      const response = await fetch(`${API_URL}/api/action/status/${currentSessionId}`, {
-        credentials: 'include'
-      });
-      if (response.ok) {
-        const status = await response.json();
-        // For now, assume green cells exist if there are recent AI actions to undo
-        const hasChanges = status.canUndo;
-        // Debug: checkForGreenCells result
-        console.log('🟢 Full status from backend:', status);
-        console.log('🟢 hasGreenCells:', hasChanges, 'changesCount:', status.changesCount);
-        setHasGreenCells(hasChanges);
-        
-        // עדכון ספירת השינויים מהבקענד
-        setChangesCount(status.changesCount || 0);
-      }
-    } catch (error) {
-      console.error('Error checking for green cells:', error);
-      setHasGreenCells(false);
-      setChangesCount(0);
-    } finally {
-      setIsCheckingGreenCells(false);
-    }
-  };
 
   // ✅ Approve All Changes
   const approveAllChanges = async () => {
@@ -1336,7 +1340,9 @@ function App() {
         setTimeout(() => {
           const iframe = document.querySelector('iframe[title="Google Sheets"]');
           if (iframe) {
-            iframe.src = iframe.src;
+            // Force iframe reload by setting src to itself
+            const currentSrc = iframe.src;
+            iframe.src = currentSrc;
           }
         }, 500);
       } else {
@@ -1384,7 +1390,9 @@ function App() {
         setTimeout(() => {
           const iframe = document.querySelector('iframe[title="Google Sheets"]');
           if (iframe) {
-            iframe.src = iframe.src;
+            // Force iframe reload by setting src to itself
+            const currentSrc = iframe.src;
+            iframe.src = currentSrc;
           }
         }, 500);
       } else {
@@ -1423,7 +1431,9 @@ function App() {
           setTimeout(() => {
             const iframe = document.querySelector('iframe[title="Google Sheets"]');
             if (iframe) {
-              iframe.src = iframe.src;
+              // Force iframe reload by setting src to itself
+              const currentSrc = iframe.src;
+              iframe.src = currentSrc;
             }
           }, 500); // השהיה קצרה לפני רענון
         }
@@ -1465,7 +1475,9 @@ function App() {
           setTimeout(() => {
             const iframe = document.querySelector('iframe[title="Google Sheets"]');
             if (iframe) {
-              iframe.src = iframe.src;
+              // Force iframe reload by setting src to itself
+              const currentSrc = iframe.src;
+              iframe.src = currentSrc;
             }
           }, 500); // השהיה קצרה לפני רענון
         }
@@ -1612,7 +1624,9 @@ function App() {
                  setTimeout(() => {
                      const iframe = document.querySelector('iframe[title="Google Sheets"]');
                      if (iframe) {
-                         iframe.src = iframe.src;
+                         // Force iframe reload by setting src to itself
+                         const currentSrc = iframe.src;
+                         iframe.src = currentSrc;
                      }
                  }, 800); // השהיה מעט יותר ארוכה עבור פקודות צ'אט
              }
